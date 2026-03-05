@@ -1,4 +1,4 @@
-const main = document.querySelector("main");
+﻿const main = document.querySelector("main");
 const inputMessage = document.getElementById("message");
 const inputName = document.getElementById("name");
 const submitButton = document.getElementById("submit");
@@ -30,6 +30,13 @@ submitButton.addEventListener('click', function (event) {
 
     postMessage(user, message);
     inputMessage.value = "";
-}),
+});
+
+message.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        submitButton.click();
+    }
+});
 
 getMessages();
