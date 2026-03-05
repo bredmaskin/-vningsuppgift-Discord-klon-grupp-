@@ -1,4 +1,7 @@
 const main = document.querySelector("main");
+const inputMessage = document.getElementById("message");
+const inputName = document.getElementById("name");
+const submitButton = document.getElementById("submit");
 
 async function getMessages() {
     const res = await fetch("/api/messages");
