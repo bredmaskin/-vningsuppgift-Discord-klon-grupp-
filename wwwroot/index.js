@@ -14,4 +14,22 @@ async function getMessages() {
     });
 }
 
+async function postMessage(user, message) {
+    await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user, message })
+    });
+    getMessages();
+}
+
+submitButton.addEventListener('click', function (event) {
+    event.preventDefault();
+    const user = inputName.value.trim();
+    const message = inputMessage.value.trim();
+
+    postMessage(user, message);
+    inputMessage.value = "";
+}),
+
 getMessages();
