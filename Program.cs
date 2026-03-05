@@ -1,12 +1,10 @@
-var app = WebApplication.Create(args);
-app.MapGet("/", () => "Hello World!");
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    WebRootPath = "public"
+});
 
-// Middleware
-app.UseCors("");
-
-// Servera statiska filer från wwwroot (index.html, css, js)
-app.UseDefaultFiles();  // index.html som standardfil
-app.UseStaticFiles();   // css, js, bilder
-app.UseAuthorization();
+var app = builder.Build();
+app.UseFileServer();
 
 app.Run("http://localhost:3000");
