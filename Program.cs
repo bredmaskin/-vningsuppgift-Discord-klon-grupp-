@@ -1,6 +1,3 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
-
+var app = WebApplication.Create(args);
 app.MapGet("/", () => "Hello World!");
-
-app.Run();
+app.Run("http://localhost:3000");
