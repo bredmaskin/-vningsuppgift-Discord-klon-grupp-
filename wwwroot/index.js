@@ -29,7 +29,7 @@ async function pollMessages() {
     } catch (err) {
         await new Promise(resolve => setTimeout(resolve, 5000));
     }
-
+    await new Promise(resolve => setTimeout(resolve, 200));
     pollMessages();
 }
 
