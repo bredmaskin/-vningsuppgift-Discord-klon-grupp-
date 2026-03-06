@@ -15,18 +15,25 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+CancellationTokenSource postCT = new CancellationTokenSource();
+
 app.MapGet("/api/messages", async (HttpRequest request, CancellationToken ct) =>
 {
+    Console.WriteLine("Received GET /api/messages request.");
     request.Headers.TryGetValue("X-Poll", out var pollValue);
     if (pollValue == "yes")
     {
         try
         {
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, app.Lifetime.ApplicationStopping);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+                ct, 
+                app.Lifetime.ApplicationStopping,
+                postCT.Token);
             await Task.Delay(TimeSpan.FromSeconds(30), linkedCts.Token);
         }
         catch (TaskCanceledException)
         {
+            return Results.Json(messages);
             Console.WriteLine("Polling request cancelled.");
         }
     }
@@ -35,6 +42,9 @@ app.MapGet("/api/messages", async (HttpRequest request, CancellationToken ct) =>
 
 app.MapPost("/api/messages", (ChatMessage newMessage) =>
 {
+    postCT.Cancel();
+    postCT.Dispose();
+    postCT = new CancellationTokenSource();
     messages.Add(newMessage);
     return Results.Created($"/api/messages/{newMessage.User}", newMessage);
 });

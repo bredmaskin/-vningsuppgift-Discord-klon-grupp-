@@ -14,6 +14,25 @@ async function getMessages() {
     });
 }
 
+async function pollMessages() {
+    try {
+        const res = await fetch("/api/messages", {
+            headers: { "X-Poll": "yes" }
+        });
+        const data = await res.json();
+
+        main.innerHTML = "";
+        data.forEach(message => {
+            main.innerHTML += `<div>${message.user}: ${message.message}</div>`;
+        });
+        console.log("Updated messages")
+    } catch (err) {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+
+    pollMessages();
+}
+
 async function postMessage(user, message) {
     await fetch("/api/messages", {
         method: "POST",
@@ -40,3 +59,4 @@ message.addEventListener("keydown", (e) => {
 });
 
 getMessages();
+pollMessages();
