@@ -20,7 +20,14 @@ app.MapGet("/api/messages", async (HttpRequest request) =>
     request.Headers.TryGetValue("X-Poll", out var pollValue);
     if (pollValue == "yes")
     {
-        await Task.Delay(TimeSpan.FromSeconds(30));
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(30), app.Lifetime.ApplicationStopping);
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine("Polling request cancelled.");
+        }
     }
     return Results.Json(messages);
 });
