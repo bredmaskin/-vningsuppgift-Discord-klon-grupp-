@@ -15,14 +15,15 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGet("/api/messages", async (HttpRequest request) =>
+app.MapGet("/api/messages", async (HttpRequest request, CancellationToken ct) =>
 {
     request.Headers.TryGetValue("X-Poll", out var pollValue);
     if (pollValue == "yes")
     {
         try
         {
-            await Task.Delay(TimeSpan.FromSeconds(30), app.Lifetime.ApplicationStopping);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, app.Lifetime.ApplicationStopping);
+            await Task.Delay(TimeSpan.FromSeconds(30), linkedCts.Token);
         }
         catch (TaskCanceledException)
         {
