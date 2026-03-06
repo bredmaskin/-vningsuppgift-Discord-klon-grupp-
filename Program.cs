@@ -1,5 +1,6 @@
 ﻿using _vningsuppgift_Discord_klon_grupp_;
 using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 
 var messages = new List<ChatMessage>
 {
@@ -14,8 +15,13 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGet("/api/messages", () =>
+app.MapGet("/api/messages", async (HttpRequest request) =>
 {
+    request.Headers.TryGetValue("X-Poll", out var pollValue);
+    if (pollValue == "yes")
+    {
+        await Task.Delay(TimeSpan.FromSeconds(30));
+    }
     return Results.Json(messages);
 });
 
